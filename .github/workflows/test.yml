@@ -1,0 +1,59 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          cd backend
+          # If backend specifically needs requirements, install them. 
+          # My setup has shared requirements in root? Step 1278. 
+          # I'll install root requirements which include pytest.
+          # Note: Step 1278 said requirements.txt is in root.
+          # Also the provided yaml says `cd backend; pip install -r requirements.txt`.
+          # I should likely make sure backend/requirements.txt exists (I didn't create it explicitly, I updated root).
+          # I'll adjust the YAML to point to root requirements.txt if cleaner, OR create backend/requirements.txt.
+          # Since I didn't create `backend/requirements.txt` yet, I'll assume root.
+          # Wait, Step 1281 updated root requirements.
+          # So I should execute `pip install -r requirements.txt` (root).
+      
+      - name: Run tests
+        run: |
+          cd backend
+          pytest --cov --cov-report=xml
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+      
+      - name: Run tests
+        run: |
+          cd frontend
+          npm test
