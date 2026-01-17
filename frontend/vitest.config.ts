@@ -5,7 +5,7 @@ export default defineConfig({
     plugins: [react()],
     test: {
         globals: true,
-        environment: 'jsdom',
+        environment: 'happy-dom',
         setupFiles: './src/test/setup.ts',
         coverage: {
             provider: 'v8',
@@ -15,5 +15,6 @@ export default defineConfig({
                 'src/test/',
             ],
         },
+        exclude: ['node_modules', 'e2e'],
     },
 });
